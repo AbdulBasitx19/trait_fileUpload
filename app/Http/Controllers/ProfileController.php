@@ -12,7 +12,7 @@ class ProfileController extends Controller
     use FileUploader;
 
     public function index(){
-        $profiles = Profile->latest()->get();
+        $profiles = Profile::latest()->get();
         return view('profiles.index', compact('profiles'));
     }
 

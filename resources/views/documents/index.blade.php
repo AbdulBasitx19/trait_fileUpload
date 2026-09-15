@@ -12,7 +12,7 @@
     <div style="margin-bottom: 30px; display: flex; gap: 15px">
         <a href="{{ route('documents.index')}}" style="padding: 10px 20px; background-color: #11355c; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">Documents</a>
         <a href="{{ route('images.index')}}" style="padding: 10px 20px; background-color:  #11355c; color:white; text-decoration:none; border-radius:5px;">Images</a>
-        <a href="{{ route('profile.index')}}" style="padding: 10px 20px; background-color: #11355c; color: white; text-decoration: none; border-radius: 5px;">Profiles</a>
+        <a href="{{ route('profiles.index')}}" style="padding: 10px 20px; background-color: #11355c; color: white; text-decoration: none; border-radius: 5px;">Profiles</a>
     </div>
 
     @if(session('success'))

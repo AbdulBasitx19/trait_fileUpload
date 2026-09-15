@@ -12,7 +12,7 @@ class ImageController extends Controller
     use FileUploader;
 
     public function index(){
-        $images = Image->latest()->get();
+        $images = Image::latest()->get();
         return view('images.index', compact('images'));
     }
 

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profiles - File Upload with Trait</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 40px; background-color: #f4f4f9;">
+
+    <div style="max-width: 1000px; margin: 0 auto;">
+        
+        <!-- Navigation -->
+        <div style="margin-bottom: 30px; display: flex; gap: 15px;">
+            <a href="{{ route('documents.index') }}" style="padding: 10px 20px; background-color: #113d63; color: white; text-decoration: none; border-radius: 5px;">Documents</a>
+            <a href="{{ route('images.index') }}" style="padding: 10px 20px; background-color:#113d63; color: white; text-decoration: none; border-radius: 5px;">Images</a>
+            <a href="{{ route('profiles.index') }}" style="padding: 10px 20px; background-color:#113d63; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">Profiles</a>
+        </div>
+
+        @if(session('success'))
+            <div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Upload Form -->
+        <div style="background-color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0; color: #333;">Upload Profile Picture</h2>
+            
+            <form action="{{ route('profiles.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Title:</label>
+                    <input type="text" name="title" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                    @error('title')
+                        <span style="color: #dc3545; font-size: 14px;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Select Profile Picture (JPG, PNG - Max 1MB):</label>
+                    <input type="file" name="file" accept="image/*" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                    @error('file')
+                        <span style="color: #dc3545; font-size: 14px;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">Storage Type:</label>
+                    <div style="display: flex; gap: 30px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="radio" name="disk" value="public" checked style="margin-right: 8px;">
+                            <strong style="color: #28a745;">Public</strong>
+                        </label>
+                        <label style="display: flex; align-items: center;">
+                            <input type="radio" name="disk" value="local" style="margin-right: 8px;">
+                            <strong style="color: #dc3545;">Private</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" style="background-color: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">Upload Profile Picture</button>
+            </form>
+        </div>
+
+        <!-- Profiles List -->
+        <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0; color: #333;">All Profile Pictures ({{ $profiles->count() }})</h2>
+
+            @if($profiles->isNotEmpty())
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #007bff; color: white;">
+                            <th style="padding: 12px; text-align: left;">Title</th>
+                            <th style="padding: 12px; text-align: left;">File Name</th>
+                            <th style="padding: 12px; text-align: left;">Disk</th>
+                            <th style="padding: 12px; text-align: left;">Size</th>
+                            <th style="padding: 12px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($profiles as $profile)
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 12px;">{{ $profile->title }}</td>
+                                <td style="padding: 12px;">{{ $profile->original_name }}</td>
+                                <td style="padding: 12px;">
+                                    @if($profile->disk === 'public')
+                                        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px;">Public</span>
+                                    @else
+                                        <span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px;">Private</span>
+                                    @endif
+                                </td>
+                                <td style="padding: 12px;">{{ number_format($profile->file_size / 1024, 2) }} KB</td>
+                                <td style="padding: 12px; text-align: center;">
+                                    @if($profile->disk === 'public')
+                                        <a href="{{ asset('storage/' . $profile->file_path) }}" target="_blank" style="background-color: #17a2b8; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin-right: 5px;">View</a>
+                                    @endif
+                                    <form action="{{ route('profiles.destroy', $profile->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" onclick="return confirm('Are you sure?')" style="background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <p style="color: #999; text-align: center; padding: 20px;">No profile pictures uploaded yet.</p>
+            @endif
+        </div>
+
+    </div>
+
+</body>
+</html>

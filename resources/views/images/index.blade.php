@@ -71,7 +71,7 @@
                         </tr>
                 </thead>
                 <tbody>
-                    @foreach($images as $img)
+                    @foreach($images as $image)
                         <tr style="border-bottom: 1px solid #ddd;">
                             <td style="padding: 12px;">{{ $image->title }}</td>
                             <td style="padding: 12px;">{{ $image->original_name }}</td>
