@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class DocumentController extends Controller
 {
     //
+     use FileUploader;
 
     public function index(){
         $documents = Document::latest()->get();
